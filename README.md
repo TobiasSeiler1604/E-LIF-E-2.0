@@ -21,24 +21,18 @@ This project is intended to:
 **Problem**
 > 🚧 Describe the real-world problem your application solves. (Not HOW, but WHAT)
 
-💡 In a busy life style, the users don't have much time to track their in the making daily habits. This causes them not having an overview on their daily habit goals.
+💡 Example: In a busy lifestyle, individuals often lack a simple, consolidated way to track and assess their daily wellness habits (e.g., sleep, stress, water, exercise). This lack of immediate feedback makes it difficult to maintain awareness, identify patterns, and make necessary adjustments to achieve their health and habit goals.
 
 **Scenario**
 > 🚧 Describe when and how a user will use your application
 
-💡  E-life(e) helps in the part of the problem where users, by answering quick and easy questions on their habits, automatically generate a daily/weekly clear overview..
+💡 Example: The E-lif(e) Tracker is designed for quick, end-of-day use. The user runs the application from the console, is prompted with quick questions about their day's habits, and, upon completion, automatically generates a clear status report with a personalized wellness score and actionable advice. This provides an immediate, clear overview without complex setup or extensive data entry.
 
 **User stories:**
-1. As a user, I want to track my daily habits.
-2. As a user, I want to select options for answers.
-3. As a user, I want to be reminded of my goals
-4. As a user, As a user, I want an overview to be created and saved.
-
-**Use cases:**
-- Show Menu (from `menu.txt`)
-- Create Order (choose pizzas)
-- Show Current Order and Total
-- Print Invoice (to `invoice_xxx.txt`)
+1. As a user, I want to track my daily habits by answering simple, quick questions.
+2. As a user, I want to select from predefined options (e.g., good/medium/bad) or input simple numeric values for answers.
+3. As a user, I want a daily status report that gives advice based on my input
+4. As a user, I want the history of my daily reports to be saved so I can view my progress over time.
 
 ---
 
@@ -64,31 +58,51 @@ The application interacts with the user via the console. Users can:
 ---
 
 
-### 2. Data Validation - to be done later
+### 2. Data Validation 
 
 The application validates all user input to ensure data integrity and a smooth user experience. This is implemented in `main-invoice.py` as follows:
 
-- **Menu selection:** When the user enters a pizza number, the program checks if the input is a digit and within the valid menu range:
+- **Stress level validation:** When the user enters their daily stress level, the program ensures that the input is a number between 1 and 5:
 	```python
-	if not choice.isdigit() or not (1 <= int(choice) <= len(menu)):
-			print("⚠️ Invalid choice.")
+	if not stress.isdigit() or not (1 <= int(stress) <= 5):
+    	print("⚠️ Please enter a number between 1 and 5.")
 			continue
 	```
-	This ensures only valid menu items can be ordered.
 
-- **Menu file validation:** When reading the menu file, the program checks for valid price values and skips invalid lines:
+- **Sleep quality validation:** The user must choose from specific options (good, medium, bad):
+	```python
+	if sleep_quality.lower() not in ["good", "medium", "bad"]:
+    	print("⚠️ Invalid input. Please choose: good, medium, or bad.")
+    		continue
+
+	```
+
+- **Yes/No questions (friends, exercise, hobbies, medication):** For binary inputs, the program checks if the user enters only yes or no:
+	```python
+	if answer.lower() not in ["yes", "no"]:
+    	print("⚠️ Please enter 'yes' or 'no'.")
+    		continue
+
+	```
+
+- **YWater intake validation:** Water intake is checked to confirm that the input is numeric and within realistic limits:
 	```python
 	try:
-			menu.append({"name": name, "size": size, "price": float(price)})
+	water = float(water_input)
 	except ValueError:
-			print(f"⚠️ Skipping invalid line: {line.strip()}")
+    print("⚠️ Please enter a valid number (e.g., 1.5).")
+    		continue
+
 	```
 
-- **Main menu options:** The main menu checks for valid options and handles invalid choices gracefully:
+- **Step count validation:** The number of steps is verified to be a positive integer:
 	```python
-	else:
-			print("⚠️ Invalid choice.")
+	if not steps.isdigit() or int(steps) < 0:
+    	print("⚠️ Invalid input. Please enter a positive number.")
+    		continue
+
 	```
+
 
 These checks prevent crashes and guide the user to provide correct input, matching the validation requirements described in the project guidelines.
 
@@ -97,34 +111,69 @@ These checks prevent crashes and guide the user to provide correct input, matchi
 ---
 
 
-### 3. File Processing - to be done later
+### 3. File Processing 
 
 The application reads and writes data using files:
 
-- **Input file:** `menu.txt` — Contains the pizza menu, one item per line in the format `PizzaName;Size;Price`.
-	- Example:
-		```
-		Margherita;Medium;12.50
-		Salami;Large;15.00
-		Funghi;Small;9.00
-		```
-	- The application reads this file at startup to display available pizzas.
+- **Input file:** `weekly_data.txt` — Contains the user’s tracked daily data, one line per day in the format:
+				Day;SleepQuality;StressLevel;Friends;WaterIntake;Exercise;Mood;WorkHours;Hobbies;Steps;Medication:
+	
+	Example:
 
-- **Output file:** `invoice_001.txt` (and similar) — Generated when an order is completed. Contains a summary of the order, including items, quantities, prices, discounts, and totals.
-	- Example:
-		```
-		Invoice #001
-		----------------------
-		1x Margherita (Medium)   12.50
+	```python
+				Day 1;good;3;yes;1.5;yes;happy;8;yes;8000;no
+				Day 2;medium;4;no;1.0;no;anxious;9;no;5000;yes
+				Day 3;bad;5;no;0.7;no;irritable;10;no;3000;no
 
-
-		2x Salami (Large)        30.00
-		----------------------
-		Total:                  42.50
-		Discount:                2.50
-		Amount Due:             40.00
 		```
-		- The output file serves as a record for both the user and the pizzeria, ensuring accuracy and transparency.
+- The application reads this file to generate a weekly summary and give personalized advice.
+- Reading the file (example implementation):
+
+		```python
+		with open("weekly_data.txt", "r") as file:
+   			 for line in file:
+        parts = line.strip().split(";")
+        if len(parts) == 11:
+            data.append(parts)
+        else:
+            print(f"⚠️ Skipping invalid line: {line.strip()}")
+
+		```
+
+- **Output file:** `report.txt` — Generated after completing a week of entries.
+					The file contains averages, insights, and advice based on the collected data.
+		Example:
+
+		```python
+		
+		E-lif(e) Weekly Report
+		---------------------------
+		Average stress level: 3.7
+		Sleep quality: mostly medium
+		Average water intake: 1.2L
+		Steps: great job (average 8,200)
+		Exercise: 4/7 days
+		Mood summary: balanced, slightly anxious midweek
+
+		💡 Advice:
+		- Try to increase water intake to 1.5L daily.
+		- Reduce stress through light exercise or mindfulness.
+		- Keep up the good step count!
+
+		```
+ - Writing the file (example implementation):
+
+		```python
+
+		with open("report.txt", "w") as file:
+    	file.write("E-lif(e) Weekly Report\n")
+    	file.write("---------------------------\n")
+    	file.write(f"Average stress level: {avg_stress}\n")
+    	file.write(f"Average steps: {avg_steps}\n")
+    	file.write("💡 Advice: Stay hydrated and manage stress.\n") 
+
+		```
+
 
 ## ⚙️ Implementation
 
@@ -135,13 +184,13 @@ The application reads and writes data using files:
 - No external libraries
 
 ### 📂 Repository Structure
-```text
-PizzaRP/
-├── main.py             # main program logic (console application)
-├── menu.txt            # pizza menu (input data file)
-├── invoice_001.txt     # example of a generated invoice (output file)
-├── docs/               # optional screenshots or project documentation
-└── README.md           # project description and milestones
+	```text
+	E-lif(e)/
+	├── main.py              # main program logic (console interaction)
+	├── weekly_data.txt      # input/output storage of daily entries
+	├── report.txt           # generated weekly advice report
+	├── docs/                # documentation and screenshots
+	└── README.md            # project overview
 ```
 
 ### How to Run
@@ -155,8 +204,11 @@ PizzaRP/
 
 ### Libraries Used
 
-- `os`: Used for file and path operations, such as checking if the menu file exists and creating new files.
-- `glob`: Used to find all invoice files matching a pattern (e.g., `invoice_*.txt`) to determine the next invoice number.
+- `os`: Check if files exist and handle paths.
+- `csv` → Write and read daily input data in structured form.
+- `datetime` → Add timestamps or weekly summaries.
+
+All used libraries are built into Python’s standard library..
 
 These libraries are part of the Python standard library, so no external installation is required. They were chosen for their simplicity and effectiveness in handling file management tasks in a console application.
 
