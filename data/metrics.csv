@@ -7,3 +7,5 @@ timestamp,metric,value,units,context,comment
 2025-12-05T18:33:24.216018Z,water_ml,2000.0,ml,daily_checkin,
 2025-12-05T18:33:27.262869Z,steps,5000,count,daily_checkin,
 2025-12-05T18:33:29.240709Z,mood,5,rating,daily_checkin,
+2025-12-06T15:03:38.737737Z,steps,0,count,daily_checkin,
+2025-12-06T15:03:55.585451Z,mood,5,rating,daily_checkin,

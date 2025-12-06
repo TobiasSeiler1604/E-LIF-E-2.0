@@ -1,13 +1,9 @@
 import datetime
 import json
-import os
+import pathlib
 from Menu import decision
 
-DATA_FILE = "girlypop_data.json"
-
-# ------------------------------
 # Input-to-number mappings
-# ------------------------------
 SLEEP_MAP = {"bad": 1, "medium": 2, "good": 3}
 MOOD_MAP = {"angry": 1, "anxious": 1, "irritable": 1,
             "hyper": 2, "calm": 3, "relaxed": 3, "happy": 3}
@@ -16,30 +12,35 @@ YES_NO_MAP = {"no": 1, "yes": 2}
 FIELDS_NUMERIC = ["sleep", "stress", "friends", "water",
                   "exercise", "mood", "work_hours", "hobbies", "steps", "meds"]
 
-# ------------------------------
-# Load and save JSON
-# ------------------------------
-
 
 def load_data():
-    if not os.path.exists(DATA_FILE):
-        return []
-    with open(DATA_FILE, "r", encoding="utf-8") as f:
+    """Load monthly data from JSON file."""
+    now = datetime.datetime.now()
+    filename = pathlib.Path(f"./data/{now.year}-{now.month}.json")
+
+    if not filename.exists():
+        return {}
+
+    with open(filename, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
 def save_data(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4)
+    """Save data to monthly JSON file."""
+    now = datetime.datetime.now()
+    filename = pathlib.Path(f"./data/{now.year}-{now.month}.json")
 
-# ------------------------------
-# Collect inputs and convert
-# ------------------------------
+    if not filename.parent.exists():
+        filename.parent.mkdir(parents=True)
+
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
 
 
 def collect_daily_inputs():
     day = {}
-    today = datetime.datetime.now()
+    now = datetime.datetime.now()
+    day_key = f"{now.year}-{now.month}-{now.day}"
 
     while True:
         val = input("Sleep (good/medium/bad): ").lower().strip()
@@ -134,11 +135,7 @@ def collect_daily_inputs():
             break
         print("Invalid input.")
 
-    return day
-
-# ------------------------------
-# Compute numeric score
-# ------------------------------
+    return day_key, day
 
 
 def process_day(day):
@@ -184,58 +181,41 @@ def process_day(day):
     day["score"] = score
     return day, advice
 
-# ------------------------------
-# Generate monthly summary report
-# ------------------------------
-
 
 def generate_monthly_summary(data):
     if not data:
         return "No days logged this month 😭"
 
-    report = f"\n💗 MONTHLY SUMMARY 💗\nDays logged: {len(data)}\n"
+    # Filter out entries without score
+    valid_entries = [d for d in data.values() if "score" in d]
 
-    total_score = sum(d["score"] for d in data)
-    avg_score = total_score / len(data)
+    if not valid_entries:
+        return "No days logged this month 😭"
+
+    report = f"\n💗 MONTHLY SUMMARY 💗\nDays logged: {len(valid_entries)}\n"
+
+    total_score = sum(d["score"] for d in valid_entries)
+    avg_score = total_score / len(valid_entries)
     report += f"Average total score: {avg_score:.1f}\n"
 
     for field in FIELDS_NUMERIC:
-        avg = sum(d[field] for d in data) / len(data)
-        report += f"- Average {field}: {avg:.1f}\n"
+        if field in valid_entries[0]:
+            avg = sum(d[field] for d in valid_entries) / len(valid_entries)
+            report += f"- Average {field}: {avg:.1f}\n"
 
     return report
 
 
 def save_monthly_report(data):
-    """Generate and save monthly report as JSON file."""
+    """Generate and display monthly report in terminal."""
     if not data:
         print("\n❌ No days logged this month 😭")
         return
 
-    today = datetime.datetime.now()
-    report_data = {
-        "month": today.month,
-        "year": today.year,
-        "days_logged": len(data),
-        "total_score": sum(d["score"] for d in data),
-        "average_score": sum(d["score"] for d in data) / len(data),
-        "averages": {}
-    }
+    now = datetime.datetime.now()
 
-    for field in FIELDS_NUMERIC:
-        report_data["averages"][field] = sum(
-            d[field] for d in data) / len(data)
-
-    report_filename = f"monthly_report_{today.year}_{today.month:02d}.json"
-    with open(report_filename, "w", encoding="utf-8") as f:
-        json.dump(report_data, f, indent=4)
-
-    print(f"\n✅ Monthly report saved to {report_filename}")
+    print(f"\n✅ Monthly report for {now.month}/{now.year}")
     print(generate_monthly_summary(data))
-
-# ------------------------------
-# Main program
-# ------------------------------
 
 
 def run():
@@ -246,26 +226,26 @@ def run():
         choice = decision()
 
         if choice == 1:
-            day = collect_daily_inputs()
+            day_key, day = collect_daily_inputs()
 
             # Allow changing the date
             change_date = input(
-                f"Change date from {day['date']}? (yes/no): ").lower().strip()
+                f"Change date from {day_key}? (yes/no): ").lower().strip()
             if change_date == "yes":
                 while True:
-                    date_input = input("Enter date (yyyy/mm/dd): ").strip()
+                    date_input = input("Enter date (yyyy-mm-dd): ").strip()
                     try:
-                        datetime.datetime.strptime(date_input, "%Y/%m/%d")
-                        day["date"] = date_input
+                        datetime.datetime.strptime(date_input, "%Y-%m-%d")
+                        day_key = date_input
                         break
                     except ValueError:
-                        print("Invalid format. Please use yyyy/mm/dd")
+                        print("Invalid format. Please use yyyy-mm-dd")
 
             processed, advice = process_day(day)
-            month_data.append(processed)
+            month_data[day_key] = processed
             save_data(month_data)
             print(
-                f"\n✅ Data saved! {processed['date']} → Score {processed['score']}")
+                f"\n✅ Data saved! {day_key} → Score {processed['score']}")
             if advice:
                 print("Advice:")
                 for a in advice:

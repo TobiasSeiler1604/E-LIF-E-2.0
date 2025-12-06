@@ -1,5 +1,5 @@
 def decision():
-    """Show a simple menu, validate input, and act on the choice."""
+    """Show a simple menu, validate input, and return the choice."""
 
     menu = (
         "Hello luv — please give us a hint what we should do today?\n\n"
@@ -20,13 +20,13 @@ def decision():
 
         if choice == 1:
             print("Of course girl! I'll make some snacks and coffee ready!!")
-            break
+            return choice
         elif choice == 2:
             print("Don't lose your way! I'll show you guidance <3")
-            break
+            return choice
         elif choice == 3:
             print("No problem. If you need to spill the tea, I'm here for you :)")
-            break
+            return choice
         else:
             print("Please choose 1, 2 or 3.\n")
 
