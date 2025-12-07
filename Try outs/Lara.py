@@ -40,6 +40,7 @@ def save_data(data):
 def collect_daily_inputs():
     day = {}
     today = datetime.datetime.now()
+    day["date"] = today.strftime("%Y/%m/%d")
 
     while True:
         val = input("Sleep (good/medium/bad): ").lower().strip()
@@ -226,12 +227,33 @@ def save_monthly_report(data):
         report_data["averages"][field] = sum(
             d[field] for d in data) / len(data)
 
+# Save to JSON file
+
     report_filename = f"monthly_report_{today.year}_{today.month:02d}.json"
     with open(report_filename, "w", encoding="utf-8") as f:
         json.dump(report_data, f, indent=4)
 
-    print(f"\n✅ Monthly report saved to {report_filename}")
-    print(generate_monthly_summary(data))
+# Save TXT
+
+
+report_filename_txt = f"monthly_report_{today.year}_{today.month:02d}.txt"
+    with open(report_filename_txt, "w", encoding="utf-8") as f:
+        f.write(f"""💗 MONTHLY GIRLYPOP REPORT 💗
+                Month: {today.month}/{today.year}
+                Days logged: {len(data)}
+                Total score:{report_data['total_score']}
+                Average score: {report_data['average_score']:.1f}
+
+                AVERAGES BY METRIC:
+                """)
+     for fiel in FIELDS_NUMERIC:
+        f.write(f" - {field}: {report_data['averages']^[field]:1f}\n")
+
+    print(f"""\n✅ Reports saved!
+          -JSON: {report_filename_json}
+          -TXT: {report_filename_txt}
+    generate_monthly_summary(data)""")            
+
 
 # ------------------------------
 # Main program

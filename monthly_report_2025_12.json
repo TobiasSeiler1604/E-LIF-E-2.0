@@ -1,0 +1,19 @@
+{
+    "month": 12,
+    "year": 2025,
+    "days_logged": 2,
+    "total_score": 33,
+    "average_score": 16.5,
+    "averages": {
+        "sleep": 2.5,
+        "stress": 3.5,
+        "friends": 1.0,
+        "water": 3.0,
+        "exercise": 1.0,
+        "mood": 3.0,
+        "work_hours": 85.0,
+        "hobbies": 1.0,
+        "steps": 2.5,
+        "meds": 1.0
+    }
+}
