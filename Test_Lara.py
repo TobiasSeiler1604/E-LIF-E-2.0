@@ -89,6 +89,8 @@ def ask_choice(prompt, mapping):
             return mapping[value]
         print("❌ Invalid input. Please try again.")
 
+# DEFINITION FROM LOWEST TO HIGHEST NUMBER
+
 
 def ask_number(prompt, min_val=None, max_val=None, is_float=False):
     """Validate numeric input with range checking."""
@@ -276,6 +278,8 @@ def save_monthly_report(data):
     # Save JSON
     json_name = f"monthly_report_{today.year}_{today.month:02d}.json"
     json.dump(report, open(json_name, "w"), indent=4)
+
+# TXT. FOR MORRE DEFINTION
 
     # Save TXT
     txt_name = f"monthly_report_{today.year}_{today.month:02d}.txt"
