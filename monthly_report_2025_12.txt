@@ -1,18 +1,18 @@
 💗 MONTHLY GIRLYPOP WELLNESS REPORT 💗
 ============================================================
 Month: 12/2025
-Days logged: 4
-Total score: 64
-Average score: 16.0
+Days logged: 5
+Total score: 79
+Average score: 15.8
 
 AVERAGES BY METRIC:
   • sleep: 2.0
-  • stress: 3.5
+  • stress: 3.2
   • friends: 1.2
   • water: 3.0
   • exercise: 1.0
   • mood: 3.0
-  • work_hours: 7742.5
+  • work_hours: 6197.2
   • hobbies: 1.0
-  • steps: 2.2
+  • steps: 1.8
   • meds: 1.0

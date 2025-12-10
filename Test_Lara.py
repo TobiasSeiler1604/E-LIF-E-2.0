@@ -9,13 +9,13 @@ and, upon completion, automatically generates a clear status report with a perso
 wellness score and actionable advice.
 
 USER STORIES:
-1. As a User, I want to track my daily habits by answering simple, quick questions 
+1. As a User, I want to track my daily habits by answering simple, quick questions
    in order to stay strong and healthy.
-2. As a User, I want to quickly add information about my lifestyle (nutrition, sport, sleep) 
+2. As a User, I want to quickly add information about my lifestyle (nutrition, sport, sleep)
    in order to get decisive and valuable information for improvement.
-3. As a User, I want to receive a daily status report that gives personalized advice based 
+3. As a User, I want to receive a daily status report that gives personalized advice based
    on my input in order to keep me motivated.
-4. As a User, I want the history of my daily reports to be saved so I can view my progress 
+4. As a User, I want the history of my daily reports to be saved so I can view my progress
    over time in order to track my improvement and development.
 
 USE CASES:
@@ -126,7 +126,8 @@ def collect_daily_inputs():
         "water": classify_water(),
         "exercise": ask_choice("Exercise? (yes/no): ", YES_NO_MAP),
         "mood": ask_choice(f"Mood {list(MOOD_MAP.keys())}: ", MOOD_MAP),
-        "work_hours": ask_number("Work hours: ", 0, None, True),
+        # How should I understand that???
+        "work_hours": ask_number("Work hours: ", 0, 16, True),
         "hobbies": ask_choice("Hobbies today? (yes/no): ", YES_NO_MAP),
         "steps": classify_steps(),
         "meds": ask_choice("Meds taken? (yes/no): ", YES_NO_MAP)
@@ -151,6 +152,19 @@ def classify_steps():
 # ==========================================
 
 
+advice = []
+
+
+def to_number(val):
+    try:
+        return int(val)
+    except:
+        try:
+            return float(val)
+        except:
+            return 0
+
+
 def process_day(day):
     """
     USE CASE: Generate daily status report with personalized advice
@@ -158,35 +172,34 @@ def process_day(day):
     - Provides actionable, personalized advice
     - Returns score and advice list
     """
-    score = sum([
-        day["sleep"], day["friends"], day["water"], day["exercise"],
-        day["mood"], day["steps"], day["hobbies"], day["meds"]
+    score = sum(to_number(day.get(key)) for key in [
+        "sleep", "friends", "water", "exercise", "mood", "steps", "hobbies", "meds"
     ])
 
     advice = []
 
     # Stress handling
-    if day["stress"] <= 2:
+    if to_number(day.get("stress")) <= 2:
         score += 3
-    elif day["stress"] == 3:
+    elif to_number(day.get("stress")) == 3:
         score += 1
     else:
         advice.append("💪 Lower your stress bestie!")
 
     # Personalized advice based on metrics
-    if day["friends"] == 1:
+    if to_number(day.get("friends")) == 1:
         advice.append("🌿 Touch grass with friends!")
-    if day["water"] == 1:
+    if to_number(day.get("water")) == 1:
         advice.append("💧 Hydrate queen!")
-    if day["exercise"] == 1:
+    if to_number(day.get("exercise")) == 1:
         advice.append("🏃 Move your body!")
-    if day["mood"] == 1:
+    if to_number(day.get("mood")) == 1:
         advice.append("💖 Your mood needs attention!")
-    if day["steps"] == 1:
+    if to_number(day.get("steps")) == 1:
         advice.append("👟 Walk more!")
-    if day["hobbies"] == 1:
+    if to_number(day.get("hobbies")) == 1:
         advice.append("🎨 Do something fun!")
-    if day["meds"] == 1:
+    if to_number(day.get("meds")) == 1:
         advice.append("💊 Don't forget your meds!")
 
     day["score"] = score
@@ -222,7 +235,7 @@ def generate_weekly_report(data):
     report += "METRIC AVERAGES:\n"
     for field in FIELDS_NUMERIC:
         if field in week_data[0]:
-            avg = sum(d[field] for d in week_data) / len(week_data)
+            avg = sum((d.get(field) or 0) for d in week_data) / len(week_data)
             report += f"  • {field}: {avg:.1f}\n"
 
     # Summary
@@ -263,7 +276,7 @@ def save_monthly_report(data):
     today = datetime.datetime.now()
 
     averages = {
-        field: sum(d[field] for d in data) / len(data)
+        field: sum((d.get(field) or 0) for d in data) / len(data)
         for field in FIELDS_NUMERIC
     }
 
@@ -302,15 +315,60 @@ def save_monthly_report(data):
 # ==========================================
 
 
+def to_number(val):
+    try:
+        return int(val)
+    except:
+        try:
+            return float(val)
+        except:
+            return 0
+
+
+def process_day(day):
+    """
+    USE CASE: Generate daily status report with personalized advice
+    - Calculates wellness score based on all metrics
+    - Provides actionable, personalized advice
+    - Returns score and advice list
+    """
+    score = sum(to_number(day.get(key)) for key in [
+        "sleep", "friends", "water", "exercise", "mood", "steps", "hobbies", "meds"
+    ])
+
+    advice = []
+
+    # Stress handling
+    if to_number(day.get("stress")) <= 2:
+        score += 3
+    elif to_number(day.get("stress")) == 3:
+        score += 1
+    else:
+        advice.append("💪 Lower your stress bestie!")
+
+    # Personalized advice based on metrics
+    if to_number(day.get("friends")) == 1:
+        advice.append("🌿 Touch grass with friends!")
+    if to_number(day.get("water")) == 1:
+        advice.append("💧 Hydrate queen!")
+    if to_number(day.get("exercise")) == 1:
+        advice.append("🏃 Move your body!")
+    if to_number(day.get("mood")) == 1:
+        advice.append("💖 Your mood needs attention!")
+    if to_number(day.get("steps")) == 1:
+        advice.append("👟 Walk more!")
+    if to_number(day.get("hobbies")) == 1:
+        advice.append("🎨 Do something fun!")
+    if to_number(day.get("meds")) == 1:
+        advice.append("💊 Don't forget your meds!")
+
+    day["score"] = score
+    return day, advice
+# Main Program Flow
+# ==========================================
+
+
 def run():
-    """
-    Main application loop implementing all use cases:
-    1. Load historical data (28+ days)
-    2. Collect daily inputs with validation
-    3. Generate immediate status report with advice
-    4. Save to history
-    5. Option to view weekly/monthly reports
-    """
     data = load_data()
     print(f"✨ E-Lif(e) Tracker - Loaded {len(data)} previous days")
 
@@ -318,39 +376,24 @@ def run():
         choice = decision()
 
         if choice == 1:
-            # USE CASE 1 & 2: Enter and validate daily data
             day = collect_daily_inputs()
-
-            if input("\nChange date? (yes/no): ").lower().strip() == "yes":
-                while True:
-                    new = input("Enter date (yyyy/mm/dd): ").strip()
-                    try:
-                        datetime.datetime.strptime(new, "%Y/%m/%d")
-                        day["date"] = new
-                        break
-                    except ValueError:
-                        print("❌ Invalid format.")
-
-            # USE CASE 3: Generate personalized status report
             processed, advice = process_day(day)
             data.append(processed)
-
-            # USE CASE 4: Save to history (28+ day tracking)
             save_data(data)
             append_to_weekly_log(processed)
-
             print(
                 f"\n✅ Saved {processed['date']} → Wellness Score: {processed['score']}")
             if advice:
                 print("\n💡 Personal Advice for Today:")
                 for a in advice:
                     print(f"   {a}")
-
         elif choice == 2:
             print("\n📊 Generating Monthly Report...")
             save_monthly_report(data)
-
         elif choice == 3:
+            print("\n📊 Generating Weekly Report...")
+            save_weekly_report(data)
+        elif choice == 4:
             print("Goodbye queen ✨")
             break
 

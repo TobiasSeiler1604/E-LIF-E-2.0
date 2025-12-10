@@ -54,5 +54,19 @@
         "steps": 2,
         "meds": 1,
         "score": 18
+    },
+    {
+        "date": "2025/12/10",
+        "sleep": 2,
+        "stress": 2,
+        "friends": 1,
+        "water": 3,
+        "exercise": 1,
+        "mood": 3,
+        "work_hours": 16.0,
+        "hobbies": 1,
+        "steps": null,
+        "meds": 1,
+        "score": 15
     }
 ]

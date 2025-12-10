@@ -6,8 +6,9 @@ def decision():
         "Would you like to:\n"
         "1. Spill the tea for today\n"
         "2. Give a report for this month\n"
-        "3. I'd rather not talk about it\n\n"
-        "Enter 1, 2 or 3: "
+        "3. Give a report for this week\n"
+        "4. I'd rather not talk about it\n\n"
+        "Enter 1, 2, 3 or 4: "
     )
 
     while True:
@@ -15,7 +16,7 @@ def decision():
         try:
             choice = int(choice_str)
         except ValueError:
-            print("Please enter a number (1, 2 or 3).\n")
+            print("Please enter a number (1, 2, 3 or 4).\n")
             continue
 
         if choice == 1:
@@ -25,10 +26,13 @@ def decision():
             print("Don't lose your way! I'll show you guidance <3")
             return choice
         elif choice == 3:
+            print("Girly here's your weekly report! Keep Going ;)")
+            return choice
+        elif choice == 4:
             print("No problem. If you need to spill the tea, I'm here for you :)")
             return choice
         else:
-            print("Please choose 1, 2 or 3.\n")
+            print("Please choose 1, 2, 3 or 4.\n")
 
 
 if __name__ == "__main__":
