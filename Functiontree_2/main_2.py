@@ -1,7 +1,7 @@
 import datetime
 import json
 import os
-from Menu import decision
+from menu import main_menu
 
 DATA_FILE = "girlypop_data.json"
 
@@ -40,7 +40,7 @@ def run():
     print(f"Loaded {len(month_data)} previous days.")
 
     while True:
-        choice = decision()
+        choice = main_menu()
 
         if choice == 1:
             day = collect_daily_inputs()

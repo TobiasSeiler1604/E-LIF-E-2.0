@@ -28,9 +28,9 @@ USE CASES:
 import datetime
 import json
 import os
-from Menu import decision
+from menu import main_menu
 
-DATA_FILE = "girlypop_data.json"
+DATA_FILE = "data/girlypop_data.json"
 WEEKLY_DATA_FILE = "weekly_data.txt"
 WEEKLY_REPORT_FILE = "weekly_report.txt"
 
@@ -47,7 +47,7 @@ FIELDS_NUMERIC = ["sleep", "stress", "friends", "water",
                   "exercise", "mood", "work_hours", "hobbies", "steps", "meds"]
 
 # ==========================================
-# Data Storage & Loading (28 Day History)
+# Data S        torage & Loading (28 Day History)
 # ==========================================
 
 
@@ -373,7 +373,7 @@ def run():
     print(f"✨ E-Lif(e) Tracker - Loaded {len(data)} previous days")
 
     while True:
-        choice = decision()
+        choice = main_menu()
 
         if choice == 1:
             day = collect_daily_inputs()

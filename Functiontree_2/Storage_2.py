@@ -1,7 +1,7 @@
 import datetime
 import json
 import pathlib
-from Menu import decision
+from menu import main_menu
 
 # Input-to-number mappings
 SLEEP_MAP = {"bad": 1, "medium": 2, "good": 3}
@@ -223,7 +223,7 @@ def run():
     print(f"Loaded {len(month_data)} previous days.")
 
     while True:
-        choice = decision()
+        choice = main_menu()
 
         if choice == 1:
             day_key, day = collect_daily_inputs()

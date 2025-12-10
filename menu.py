@@ -1,4 +1,4 @@
-def decision():
+def main_menu():
     """Show a simple menu, validate input, and return the choice."""
 
     menu = (
@@ -36,4 +36,4 @@ def decision():
 
 
 if __name__ == "__main__":
-    decision()
+    main_menu()

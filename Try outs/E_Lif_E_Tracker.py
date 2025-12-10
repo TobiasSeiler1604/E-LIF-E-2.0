@@ -2,7 +2,7 @@
 import datetime
 import json
 import os
-from Menu import decision
+from menu import main_menu
 
 DATA_FILE = "girlypop_data.json"
 WEEKLY_DATA_FILE = "weekly_data.txt"
@@ -399,7 +399,7 @@ def run():
     print(f"✨ E-Lif(e) Tracker - Loaded {len(data)} previous days")
 
     while True:
-        choice = decision()
+        choice = main_menu()
 
         if choice == 1:
             # USE CASE 1 & 2: Enter and validate daily data
