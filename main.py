@@ -1,30 +1,3 @@
-"""
-E-Lif(e) Tracker - Daily Wellness & Habit Tracker
-===================================================
-
-SCENARIO:
-The E-lif(e) Tracker is designed for quick, end-of-day use. The user runs the
-application from the console, is prompted with quick questions about their day's habits,
-and, upon completion, automatically generates a clear status report with a personalized
-wellness score and actionable advice.
-
-USER STORIES:
-1. As a User, I want to track my daily habits by answering simple, quick questions
-   in order to stay strong and healthy.
-2. As a User, I want to quickly add information about my lifestyle (nutrition, sport, sleep)
-   in order to get decisive and valuable information for improvement.
-3. As a User, I want to receive a daily status report that gives personalized advice based
-   on my input in order to keep me motivated.
-4. As a User, I want the history of my daily reports to be saved so I can view my progress
-   over time in order to track my improvement and development.
-
-USE CASES:
-• Enter daily wellness data (sleep, stress, exercise, etc.) ✓
-• Validate each entry to prevent invalid input ✓
-• Save all inputs to a file (e.g., 'weekly_data.txt'). Saving inputs for 28 days ✓
-• Generate a weekly status report ('report.txt') with advice and summaries ✓
-"""
-
 import datetime
 import json
 import os
@@ -47,7 +20,7 @@ FIELDS_NUMERIC = ["sleep", "stress", "friends", "water",
                   "exercise", "mood", "work_hours", "hobbies", "steps", "meds"]
 
 # ==========================================
-# Data S        torage & Loading (28 Day History)
+# Data Storage & Loading (28 Day History)
 # ==========================================
 
 
@@ -89,9 +62,8 @@ def ask_choice(prompt, mapping):
             return mapping[value]
         print("❌ Invalid input. Please try again.")
 
+
 # DEFINITION FROM LOWEST TO HIGHEST NUMBER
-
-
 def ask_number(prompt, min_val=None, max_val=None, is_float=False):
     """Validate numeric input with range checking."""
     while True:

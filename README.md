@@ -217,11 +217,22 @@ These libraries are part of the Python standard library, so no external installa
 
 > 🚧 Fill in the names of all team members and describe their individual contributions below. Each student should be responsible for at least one part of the project.
 
-| Name       	   | Contribution                                 |
-|------------------|----------------------------------------------|
-| da Costa Inês    | Menu reading (file input) and displaying menu|
-| Haefliger Sarah  | Order logic and data validation              |
-| Jegge Lara 	   | Invoice generation (file output) and slides  |
+| Name       	   | Contribution (Before Project started)        |Contribution after Projectstart                          |
+|------------------|----------------------------------------------|---------------------------------------------------------|
+| da Costa Inês    | Menu reading (file input) and displaying menu|1.) Created input_validation.py                          |
+|                  |                                              |2.) Read.me (exception project management)               |
+|                  |                                              |3.) PPT -> Live demo                                     |
+|                  |                                              |                                                         |
+| Haefliger Sarah  | Order logic and data validation              |1.) created menu.py and data storage.py                  |
+|                  |                                              |2.) putting all codes to main.py and testing             |
+|                  |                                              |3.) Read.me -> Project Management & Limitations          |
+|                  |                                              |4.) PPT -> Project management                            |
+|                  |                                              |                                                         |
+| Jegge Lara 	   | Invoice generation (file output) and slides  |1.) created reports.py and wellness_score.py             |
+|                  |                                              |2.) PPT -> a.Rationale for the topic chosen              |
+|                  |                                              |           b.Project for the topic chosen                |
+
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 1️⃣ Who did what (for your documentation)
 You can copy-paste and adjust names if you like:
