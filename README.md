@@ -317,122 +317,202 @@ Due to the late start of the implementation phase and limited remaining time bef
 
 These limitations are primarily related to time and project management constraints rather than conceptual or technical understanding. Given more time, the project could be extended with cleaner abstractions, additional tests, and more advanced logic.
 
-2. 1 Limitations in our current code
+2. 1 **Limitations in our current code**
 
-1) classify_steps() doesn’t return anything (bug)
+**Code Structure & Maintainability**
 
-    Right now:
-    ```python
-    def classify_steps():
+1) Missing return value in classify_steps()
+The classify_steps() function does not return a value, which causes the steps field to be stored as None. This affects the wellness score calculation as well as weekly and monthly averages.
+
+    ´´´python
+        def classify_steps():
         s = ask_number("Steps: ", 0, 50000)
-    ```
+´´´ 
+Since no value is returned, steps becomes None, which affects scoring and averages.
 
-    There is no return, so steps becomes None.
-    That affects scoring and weekly/monthly averages.
+Improvement idea:
 
-    Fix idea:
-    Return a category like you do for water:
+´´´python
+       def classify_steps():
+    s = ask_number("Steps: ", 0, 50000)
+    return 1 if s < 5000 else 2 if s < 10000 else 3
 
-    1 = low, 2 = medium, 3 = high
+´´´ 
 
-2) Duplicate functions in the same file
+2) Duplicate function definitions
+The functions to_number() and process_day() are defined twice in the same file. This duplication increases maintenance effort and creates the risk of inconsistencies if only one version is modified.
 
-    We define to_number() and process_day() twice (copy-paste).
-    That’s confusing and risky because later changes might only happen in one copy.
+´´´python
+       def to_number(val):
+    ...
 
-    Limitation statement: code duplication → harder maintenance.
+´´´ 
+The same function appears twice in the file, increasing maintenance risk.
 
-    Improve: keep only one version, and move scoring/advice into a separate module (you already planned wellness_score.py).
+Improvement idea:
+Move shared logic into a dedicated module (e.g. scoring.py) and import it once.
 
-3) No “28-day history” enforcement although comments say so
+3) No enforced 28-day data limit
+Although comments indicate a 28-day history, the application currently stores all entries indefinitely. Older data is never trimmed, which can distort long-term reporting and increase file size.
 
-    save_data() “maintains 28+ day history”, but it actually saves everything forever:
-    
-    data.append(processed)
-    save_data(data)
+´´´python
+       data.append(processed)
+save_data(data)
 
-    No trimming to last 28 entries.
+´´´ 
 
-    Improve: after append do:
+All historical entries are saved without trimming.
 
-    data = data[-28:]
+Improvement idea:
 
-4) File handling isn’t safe / robust
+´´´python
+      data.append(processed)
+data = data[-28:]
+save_data(data)
+ 
+´´´ 
 
-    You use:
+4) Unsafe and non-robust file handling
+JSON files are opened without context managers, and no error handling is implemented for corrupted or empty files. If a file becomes invalid, the program will crash.
 
-    ```python
-    json.load(open(DATA_FILE))
-    json.dump(data, open(DATA_FILE, "w"), ...)
-    ```
+´´´python
+     json.load(open(DATA_FILE))
+  
+´´´ 
 
-    This works, but if something goes wrong, files may stay open. Also, if the JSON file is empty/corrupted the program will crash.
+Files are opened without context managers or error handling.
 
-    Improve:
-    - use with open(...) as f:
-    - add try/except json.JSONDecodeError
+Improvement idea:
+´´´python
+       try:
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    return []
 
-5) Weekly log and weekly report are inconsistent
+´´´ 
 
-    You write weekly data into weekly_data.txt, but the weekly report is generated from JSON data. The txt log is basically not used for reporting, only for “pretty history”.
-
-    Limitation: duplicated storage formats (JSON + TXT) without a clear purpose.
-
-    Improve: choose one source of truth (JSON), and generate TXT reports from it.
-
-6) Data validation is good, but not consistent for all fields
-    - ask_choice() forces valid strings ✅
-    - ask_number() is okay ✅
-
-    But “water” and “steps” are classified while “work_hours” is raw float — yet your score calculation ignores work_hours completely.
-
-    Limitation: some metrics are collected but not used in score, so tracking feels incomplete.
-
-    Improve: either:
-    - include work_hours in score logic, or
-    - remove it from scoring expectations and use it only in reports.
-
-7) FIELDS_NUMERIC includes fields that aren’t always numeric in meaning
-
-    Your YES/NO mapping: no = 1, yes = 2 works for math, but it makes averages like:
-    - friends average = 1.6 (what does that mean?)
-
-    Limitation: averages are not always intuitive.
-
-    Improve: convert average back to meaningful text:
-    - 1–1.49 = mostly no
-    - 1.5–2 = mostly yes
-
-8) Monthly report uses all data, not “this month”
-
-    save_monthly_report(data) calculates averages across the entire dataset, even if it spans months.
-
-    Limitation: the “monthly report” isn’t truly monthly.
-
-    Improve: filter data to entries where date month/year equals current month/year.
-
-9) Minor: ask_number message has a small edge case
-
-    This part:
-
-    if min_val and max_val
+5) Inconsistent use of data storage formats
+Daily entries are written to both JSON and a TXT weekly log, but weekly reports are generated only from the JSON file. The TXT log is not used for reporting and lacks a clear functional role.
 
 
-    If min_val is 0, it evaluates False, so your range message won’t show.
+       week_data = data[-7:]
 
-    Improve: use min_val is not None checks.
+
+This selects the last seven entries, not the last seven days.
+
+Improvement idea:
+
+       from datetime import datetime, timedelta
+
+today = datetime.now()
+week_data = [
+    d for d in data
+    if datetime.strptime(d["date"], "%Y/%m/%d") >= today - timedelta(days=7)
+]
+
+
+
+6) Weekly report does not reflect a real calendar week
+The weekly report is based on the last seven logged entries rather than the last seven calendar days. If users skip days, the report may span more than one week, and missing days are not detected.
+
+´´´python
+       
+´´´ 
+
+7) Incomplete integration of collected metrics into scoring
+Some validated inputs, such as work_hours, are collected and reported but do not contribute to the wellness score, which makes tracking feel incomplete.
+
+´´´python
+       
+´´´ 
+
+8) Numeric averages are not intuitive for users
+Yes/No values are stored as numeric values (1 or 2), leading to averages such as 1.6. While mathematically correct, these results are difficult to interpret.
+
+´´´python
+       
+´´´ 
+
+9) Monthly report is not truly monthly
+The monthly report aggregates all stored data, even when entries span multiple months, reducing the accuracy of monthly insights.
+
+´´´python
+       
+´´´ 
+
+10) Minor edge case in numeric validation messages
+Range error messages in ask_number() are not displayed correctly when the minimum value is 0 due to truthy checks.
+
+11) No protection against duplicate date entries
+Users can manually enter dates that already exist in the dataset, resulting in duplicate or conflicting records for the same day.
+
+12) Overly simplified scoring categories
+Some metrics, such as water intake and steps, are reduced to broad categories. While this simplifies scoring, it limits the ability to track gradual improvements.
+
+13) Hard-coded limits may not suit all users
+Fixed upper limits for work hours, steps, and water intake may not reflect all lifestyles, such as athletes or night-shift workers.
+
+14) Lack of privacy and security measures
+All data is stored in plain JSON and TXT files without encryption or access control, which raises privacy concerns.
+
+15) Advice is rule-based rather than trend-based
+Feedback is generated from single-day thresholds and does not account for longer-term behavioral patterns.
+
+16) Dependency on an external menu module
+The application depends on an external menu.py file. If this module is missing or altered, the program will not run correctly, reducing portability.
+
+
+
 
 2. 3 What I’d consider doing next (Future improvements)
 
 If you need a strong “what we would do with more time” list:
 
-    1) Fix steps classification (return values) and validate that all fields are numeric as expected.
-    2) Remove duplicated functions and split into modules cleanly:
-        - storage.py, validation.py, scoring.py, reports.py
-    3) Implement true 28-day window and true “weekly/monthly” filters by date.
-    4) More testing: especially edge cases (empty/corrupted JSON, non-number input, missing keys).
-    5) Improve reporting clarity: translate averages back into labels (“mostly yes”, “sleep: good on average”).
-    6) Make score system transparent (show how points are calculated in the daily output).
+1) Fix and complete step classification
+We would ensure that classify_steps() returns meaningful values and that all collected fields are consistently numeric as expected.
+
+2) Refactor the code into modular components
+We would remove duplicated functions and split the application into clearly defined modules (e.g. storage, validation, scoring, reporting) to improve maintainability.
+
+´´´python
+       
+´´´ 
+
+3) Implement true time-based data filtering
+We would enforce a strict 28-day data window and generate weekly and monthly reports based on actual calendar dates rather than entry counts.
+
+4) Expand testing and error handling
+We would add systematic tests for edge cases such as corrupted or empty JSON files, invalid input, and missing data fields.
+
+´´´python
+       
+´´´ 
+
+5) Improve report clarity and user understanding
+We would translate numeric averages back into meaningful labels and present summaries in a more user-friendly way.
+
+6) Make the scoring system transparent
+We would clearly explain how each metric contributes to the daily wellness score so users can understand the results.
+
+´´´python
+       
+´´´ 
+
+7) Prevent duplicate date entries
+We would enforce one entry per calendar date by updating existing records instead of creating duplicates.
+
+8) Enforce a maximum history length
+We would automatically limit stored data to a defined number of days (e.g. 28 or 30 days) to keep reports accurate and efficient.
+
+9) Improve weekly report accuracy
+We would base weekly reports on the last seven calendar days and optionally highlight missing days.
+
+10) Add robust data-loading safeguards
+We would extend load_data() with proper exception handling to allow graceful recovery from file errors.
+
+11) Introduce trend-based insights
+We would analyze patterns over time, such as changes in stress levels, to provide more personalized and meaningful feedback.
 
 
 
