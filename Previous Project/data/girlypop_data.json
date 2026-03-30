@@ -96,5 +96,19 @@
         "steps": null,
         "meds": 1,
         "score": 17
+    },
+    {
+        "date": "2026/03/22",
+        "sleep": 3,
+        "stress": 3,
+        "friends": 1,
+        "water": 3,
+        "exercise": 1,
+        "mood": 3,
+        "work_hours": 16.0,
+        "hobbies": 1,
+        "steps": null,
+        "meds": 1,
+        "score": 14
     }
 ]
