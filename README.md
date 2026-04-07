@@ -67,20 +67,23 @@ The application allows users to:
 ### 4. Save History
 **As a user, I want my data to be stored so that I can review past results.**
 
-- **Inputs:**  | Input              | Type  | Range / Validation        |
-               | ------------------ | ----- | ------------------------- |
-               | Username           | str   | length 3–20               |
-               | Sleep Quality      | int   | 0–10                      |
-               | Mood               | int   | 0–10                      |
-               | Stress             | int   | 0–10                      |
-               | Water Intake       | float | 0.0–5.0 liters            |
-               | Step Count         | int   | 0–50,000                  |
-               | Working Hours      | float | 0–24                      |
-               | Lifestyle (yes/no) | bool  | True / False              |
-               | Period Pain        | int   | 0–10                      |
-               | Period Flow        | int   | 1=low, 2=medium, 3=strong |
+- **Inputs:**  
+
+| Input              | Type  | Range / Validation        |
+| ------------------ | ----- | ------------------------- |
+| Username           | str   | length 3–20               |
+| Sleep Quality      | int   | 0–10                      |
+| Mood               | int   | 0–10                      |
+| Stress             | int   | 0–10                      |
+| Water Intake       | float | 0.0–5.0 liters            |
+| Step Count         | int   | 0–50,000                  |
+| Working Hours      | float | 0–24                      |
+| Lifestyle (yes/no) | bool  | True / False              |
+| Period Pain        | int   | 0–10                      |
+| Period Flow        | int   | 1=low, 2=medium, 3=strong |
 
 - **Outputs:** stored history
+
 
 ---
 
@@ -90,6 +93,8 @@ The application allows users to:
 - **Inputs:** username, password [String], [String]
 - **Outputs:** account created [String]
 
+As a User, I want to track my daily habits by answering simple, quick questions in not more than 1 minute in the app in order to be efficient.
+
 ---
 
 ### 6. Login
@@ -97,6 +102,8 @@ The application allows users to:
 
 - **Inputs:** username, password [String], [String]
 - **Outputs:** access granted / denied [String]
+
+I want to have an own account so that it would be personalised to my lifestyle or my habits.
 
 ---
 
