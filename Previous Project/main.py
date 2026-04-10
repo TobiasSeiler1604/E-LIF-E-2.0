@@ -3,8 +3,8 @@ import json
 import os
 from menu import main_menu
 
-DATA_FILE = "data/girlypop_data.json"
-WEEKLY_DATA_FILE = "data/weekly_data.txt"
+DATA_FILE = "Previous Project/data/girlypop_data.json"                  #Needed to change the path to the data file, otherwise it will be created in the root folder and not in the data folder. 
+WEEKLY_DATA_FILE = "Previous Project/data/weekly_data.txt"              #I also need to create the data folder in order to save the data there. I will do that later, for now I will just change the path to the data file.
 WEEKLY_REPORT_FILE = "weekly_report.txt"
 
 # Input mappings for validation
@@ -33,12 +33,14 @@ def load_data():
 
 def save_data(data):
     """Save all data to JSON file (maintains 28+ day history)."""
+    # Ensure the directory exists before saving
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
     json.dump(data, open(DATA_FILE, "w"), indent=4)
 
 
 def append_to_weekly_log(day):
     """Append daily entry to weekly_data.txt for 28-day tracking."""
-    os.makedirs("data", exist_ok=True)
+    os.makedirs(os.path.dirname(WEEKLY_DATA_FILE), exist_ok=True)
     with open(WEEKLY_DATA_FILE, "a", encoding="utf-8") as f:
         f.write(f"\n{'='*50}\n")
         f.write(f"Date: {day['date']}\n")
@@ -147,6 +149,7 @@ def classify_steps():
     """Classify daily steps into levels with realistic limits."""
     s = ask_number(
         "Steps: ", 0, 50000)  # Max 50,000 steps (realistic limit for a day)
+    return 1 if s < 5000 else 2 if s <= 10000 else 3
 
 # ==========================================
 # Wellness Score Calculation & Advice
@@ -295,8 +298,8 @@ def save_monthly_report(data):
     }
 
     # Save JSON in data folder with 'monthly_data' in filename
-    os.makedirs("data", exist_ok=True)
-    json_name = f"data/monthly_data_{today.year}_{today.month:02d}.json"
+    os.makedirs("Previous Project/data", exist_ok=True)
+    json_name = f"Previous Project/data/monthly_data_{today.year}_{today.month:02d}.json"
     with open(json_name, "w") as f:
         json.dump(report, f, indent=4)
 
@@ -407,6 +410,7 @@ def run():
         elif choice == 4:
             print("Goodbye queen ✨")
             break
+
 
 if __name__ == "__main__":
     run()
