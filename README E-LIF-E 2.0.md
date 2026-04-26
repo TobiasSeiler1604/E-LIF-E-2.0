@@ -1,4 +1,4 @@
-# 🍕 PizzaRP – Pizzeria Reference Project (Browser App)
+# E-LIF-E (Browser App)
 
 ![UI Showcase](docs/ui-images/ui_showcase.png)
 
@@ -77,7 +77,7 @@ The application allows users to:
 | Stress             | int   | 0–10                      |
 | Water Intake       | float | 0.0–5.0 liters            |
 | Step Count         | int   | 0–50,000                  |
-| Working Hours      | float | 0–24                      |
+| Working Hours      | float | 0–16                      |
 | Lifestyle (yes/no) | bool  | True / False              |
 | Period Pain        | int   | 0–10                      |
 | Period Flow        | int   | 1=low, 2=medium, 3=strong |
@@ -162,13 +162,17 @@ I want to have an own account so that it would be personalised to my lifestyle o
 The application uses **SQLModel** to map domain objects to a SQLite database.
 
 ### Entities
-- `Pizza`
-- `Order`
-- `OrderItem`
+- `User`
+- `Habit_Definition`
+- `Daily_Entry`
+- `Wellness_Log`
+- `Report`
 
 ### Relationships
-- One `Order` → many `OrderItem`
-- Each `OrderItem` references one `Pizza`
+- One `User` → many `Daily_Entry`
+- Each `Daily_Entry` has one `Wellness_log`
+- Each `Daily_Entry` contains many `Habit_Defintion`
+- One `Report` references many `Daily_Entry`
 
 ---
 

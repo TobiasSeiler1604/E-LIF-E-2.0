@@ -1,7 +1,0 @@
-
-==================================================
-Date: 2026/04/10
-Score: 18
-Sleep: 3, Stress: 1, Mood: 3
-Exercise: 1, Water: 3, Steps: 2
-Friends: 1, Hobbies: 1, Meds: 1

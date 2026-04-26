@@ -3,8 +3,10 @@ import json
 import os
 from menu import main_menu
 
-DATA_FILE = "Previous Project/data/girlypop_data.json"                  #Needed to change the path to the data file, otherwise it will be created in the root folder and not in the data folder. 
-WEEKLY_DATA_FILE = "Previous Project/data/weekly_data.txt"              #I also need to create the data folder in order to save the data there. I will do that later, for now I will just change the path to the data file.
+# Needed to change the path to the data file, otherwise it will be created in the root folder and not in the data folder.
+DATA_FILE = "Previous Project/data/girlypop_data.json"
+# I also need to create the data folder in order to save the data there. I will do that later, for now I will just change the path to the data file.
+WEEKLY_DATA_FILE = "Previous Project/data/weekly_data.txt"
 WEEKLY_REPORT_FILE = "weekly_report.txt"
 
 # Input mappings for validation
