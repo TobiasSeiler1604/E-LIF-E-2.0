@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+# Add workspace root to path so absolute imports work
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 from elife_app.domain.models import DailyEntry
 
 
@@ -5,14 +11,14 @@ class WellnessService:
 
     def calculate_score(self, entry: DailyEntry) -> tuple[int, list[str]]:
         score = (
-            entry.sleep +
+            entry.sleep_quality +
             entry.mood +
             entry.friends * 10 +
             entry.exercise * 10 +
             entry.hobbies * 10 +
             entry.meds * 10 +
             min(entry.steps // 5000, 10) +
-            min(int(entry.water), 10)
+            min(int(entry.water_intake), 10)
         )
 
         advice = []
@@ -21,7 +27,7 @@ class WellnessService:
             advice.append("💪 Lower your stress bestie!")
         if entry.friends == 0:
             advice.append("🌿 Touch grass with friends!")
-        if entry.water < 1.5:
+        if entry.water_intake < 1.5:
             advice.append("💧 Hydrate queen!")
         if entry.exercise == 0:
             advice.append("🏃 Move your body!")

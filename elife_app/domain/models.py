@@ -1,22 +1,25 @@
 from typing import Optional
 from datetime import date
 from sqlmodel import SQLModel, Field
+# Use Python 3.11.15 for sqlmodel otherwise an error will occur when running the app.
 
 
 class DailyEntry(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     date: date
-    sleep: int = Field(ge=0, le=10)
+    sleep_quality: int = Field(ge=0, le=10)
     stress: int = Field(ge=0, le=10)
     friends: int = Field(ge=0, le=1)
-    water: float = Field(ge=0, le=10)
+    water_intake: float = Field(ge=0, le=5)
     exercise: int = Field(ge=0, le=1)
     mood: int = Field(ge=0, le=10)
-    work_hours: float = Field(ge=0, le=24)
+    work_hours: float = Field(ge=0, le=16)
     hobbies: int = Field(ge=0, le=1)
     steps: int = Field(ge=0, le=50000)
     meds: int = Field(ge=0, le=1)
     period: int = Field(ge=0, le=1)
-    period_pain: Optional[int] = Field(default=None, ge=0, le=10)
-    period_flow: Optional[str] = Field(default=None)
+    period_pain: Optional[int] = Field(
+        default=None, ge=0, le=10)  # Only relevant if period == 1
+    period_flow: Optional[int] = Field(
+        default=None, ge=0, le=3)  # Only relevant if period == 1
     score: int = Field(default=0)
